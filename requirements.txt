@@ -3,8 +3,8 @@ python-dotenv
 groq
 langchain
 langchain-groq
-chromadb
 pypdf
 transformers
 langchain_community
 sentence-transformers
+faiss-cpu
