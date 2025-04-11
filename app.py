@@ -5,10 +5,11 @@ st.set_page_config(page_title="Chatbot", page_icon="🤖")
 from dotenv import load_dotenv
 from groq import Groq
 
-from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.vectorstores import Chroma
+# Importuri actualizate pentru a evita avertismentele de depreciere
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyPDFLoader
 from langchain.chains import RetrievalQA
 from langchain_groq import ChatGroq
 
@@ -47,7 +48,12 @@ def get_retriever():
 
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
 
-    db = Chroma.from_documents(texts, embeddings, persist_directory="./chroma_db")
+    # Înlocuim Chroma cu FAISS
+    db = FAISS.from_documents(texts, embeddings)
+    
+    # Salvăm indexul pentru utilizare viitoare (opțional)
+    db.save_local("./faiss_index")
+    
     return db.as_retriever()
 
 retriever = get_retriever()
@@ -75,3 +81,5 @@ if prompt:
                 st.markdown(f"**Pagina:** {doc.metadata.get('page', '?')}")
                 st.markdown(doc.page_content)
                 st.markdown("---")
+ 
+
